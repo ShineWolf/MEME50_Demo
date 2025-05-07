@@ -1,0 +1,34 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "raspberrypi,4-model-b", "raspberrypi,5-model-b", "brcm,bcm2712";
+
+    fragment@0 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            ads1115_dev: ads1115@48 {
+                compatible = "ti,ads1115","ads1115_ws2812";
+                reg = <0x48>;
+            };
+        };
+    };
+
+    fragment@1 {
+        target-path = "/";
+        __overlay__ {
+            ws2812b_gpio: ws2812b-gpio21 {
+                compatible = "jayliao,ads1115-ws2812";
+                gpios = <&gpio 21 0>;
+                gpio-hog;
+                output-high;      // output-high（或者output-low）
+            	line-name = "ws2812-control";
+                label = "ws2812b-data";
+                i2c-parent = <&ads1115_dev>;
+            };
+        };
+    };
+};
